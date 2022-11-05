@@ -9,6 +9,36 @@ main() {
 class _PerguntaAppState extends State<PerguntaApp> {
   var _perguntaSelecionanda = 0;
 
+  final List _perguntas = const [
+    {
+      'texto': 'Qual é a sua cor favorita?',
+      'resposta': [
+        'Preto',
+        'Vermelho',
+        'Verde',
+        'Branco',
+      ],
+    },
+    {
+      'texto': 'Qual é o seu animal favorito?',
+      'resposta': [
+        'Leão',
+        'Macaco',
+        'Cachorro',
+        'Elefante',
+      ],
+    },
+    {
+      'texto': 'Qual é o seu Youtube favorito?',
+      'resposta': [
+        'Felipe Neto',
+        'Monark',
+        'Leon',
+        'Peter',
+      ],
+    }
+  ];
+
   void _responder() {
     setState(() {
       _perguntaSelecionanda++;
@@ -16,54 +46,40 @@ class _PerguntaAppState extends State<PerguntaApp> {
     print(_perguntaSelecionanda);
   }
 
+  bool get temPerguntaSelecionada {
+    return _perguntaSelecionanda < _perguntas.length;
+  }
+
   Widget build(BuildContext context) {
-    final List perguntas = [
-      {
-        'texto': 'Qual é a sua cor favorita?',
-        'resposta': [
-          'Preto',
-          'Vermelho',
-          'Verde',
-          'Branco',
-        ],
-      },
-      {
-        'texto': 'Qual é o seu animal favorito?',
-        'resposta': [
-          'Leão',
-          'Macaco',
-          'Cachorro',
-          'Elefante',
-        ],
-      },
-      {
-        'texto': 'Qual é o seu Youtube favorito?',
-        'resposta': [
-          'Felipe Neto',
-          'Monark',
-          'Leon',
-          'Peter',
-        ],
-      }
-    ];
+    List<String> respostas = temPerguntaSelecionada
+        ? _perguntas[_perguntaSelecionanda]['resposta']
+        : null;
 
-    List<Widget> respostas = [];
+    List<Widget> widget =
+        respostas.map((t) => Resposta(t, _responder)).toList();
 
-    for (var textoResp in perguntas[_perguntaSelecionanda]['resposta']) {
-      respostas.add(Resposta(textoResp, _responder));
-    }
+    // for (var textoResp in respostas) {
+    //   widget.add(Resposta(textoResp, _responder));
+    // }
 
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text('Perguntas'),
         ),
-        body: Column(
-          children: <Widget>[
-            Questao(perguntas[_perguntaSelecionanda]['texto']),
-            ...respostas,
-          ],
-        ),
+        body: temPerguntaSelecionada
+            ? Column(
+                children: <Widget>[
+                  Questao(_perguntas[_perguntaSelecionanda]['texto']),
+                  ...widget,
+                ],
+              )
+            : Center(
+                child: Text(
+                  'Você chegou ao fim das perguntas',
+                   style: TextStyle(fontSize: 28),
+                ),
+              ),
       ),
     );
   }
